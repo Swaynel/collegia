@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: 'Online College - Quality Education for Everyone',
   description: 'Access world-class courses and resources with flexible learning paths designed for African learners.',
   manifest: '/manifest.json',
- 
+
 };
 
 
@@ -32,12 +32,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body className={inter.className}>
         <div className="min-h-screen bg-background text-foreground">
           {children}
         </div>
       </body>
     </html>
+
   );
 }
