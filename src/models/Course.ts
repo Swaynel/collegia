@@ -53,8 +53,6 @@ const CourseSchema = new Schema<ICourse>(
   },
   { timestamps: true }
 );
-
-CourseSchema.index({ slug: 1 });
 CourseSchema.index({ tier: 1, isPublished: 1 });
 CourseSchema.index({ enrolledCount: -1 });
 
