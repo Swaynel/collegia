@@ -1,38 +1,72 @@
 import { Redis } from '@upstash/redis';
 
-if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
-  throw new Error('Upstash Redis URL or token is not set in environment variables.');
+// Don't throw during import - let it be null if vars are missing
+const url = process.env.UPSTASH_REDIS_REST_URL;
+const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+let redisClient: Redis | null = null;
+
+// Initialize only if credentials exist
+if (url && token) {
+  redisClient = new Redis({ url, token });
+} else {
+  console.warn('⚠️ Upstash Redis credentials not found. Redis features will be disabled.');
 }
-export const redisClient = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+
+// Helper to ensure Redis is available
+function ensureRedis(): Redis {
+  if (!redisClient) {
+    throw new Error('Redis client is not initialized. Check UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN.');
+  }
+  return redisClient;
+}
+
+export { redisClient };
 
 export async function checkRateLimit(
   identifier: string,
   limit: number,
   windowSeconds: number
 ): Promise<{ allowed: boolean; remaining: number }> {
-  const key = `ratelimit:${identifier}`;
-  const current = await redisClient.incr(key);
-
-  if (current === 1) {
-    await redisClient.expire(key, windowSeconds);
+  if (!redisClient) {
+    console.warn('Redis not available, skipping rate limit');
+    return { allowed: true, remaining: limit };
   }
 
-  const remaining = Math.max(0, limit - current);
-  return {
-    allowed: current <= limit,
-    remaining,
-  };
+  try {
+    const key = `ratelimit:${identifier}`;
+    const current = await redisClient.incr(key);
+
+    if (current === 1) {
+      await redisClient.expire(key, windowSeconds);
+    }
+
+    const remaining = Math.max(0, limit - current);
+    return {
+      allowed: current <= limit,
+      remaining,
+    };
+  } catch (error) {
+    console.error('Rate limit check failed:', error);
+    return { allowed: true, remaining: limit }; // Fail open
+  }
 }
 
 export async function invalidateCourseCache(tier?: string) {
-  if (tier) {
-    await redisClient.del(`courses:list:${tier}`);
-  } else {
-    await redisClient.del('courses:list:basics');
-    await redisClient.del('courses:list:intermediate');
-    await redisClient.del('courses:list:advanced');
+  if (!redisClient) {
+    console.warn('Redis not available, skipping cache invalidation');
+    return;
+  }
+
+  try {
+    if (tier) {
+      await redisClient.del(`courses:list:${tier}`);
+    } else {
+      await redisClient.del('courses:list:basics');
+      await redisClient.del('courses:list:intermediate');
+      await redisClient.del('courses:list:advanced');
+    }
+  } catch (error) {
+    console.error('Cache invalidation failed:', error);
   }
 }

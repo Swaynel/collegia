@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Course from '@/models/Course';
-import { redisClient } from '@/lib/redis'; // ✅ updated import name
+import { redisClient } from '@/lib/redis';
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,10 +10,16 @@ export async function GET(req: NextRequest) {
 
     const cacheKey: string = tier ? `courses:list:${tier}` : 'courses:list:all';
 
-    // Try cache first
-    const cached = await redisClient.get(cacheKey);
-    if (cached) {
-      return NextResponse.json({ courses: JSON.parse(cached as string) });
+    // Try cache first (only if Redis is available)
+    if (redisClient) {
+      try {
+        const cached = await redisClient.get(cacheKey);
+        if (cached) {
+          return NextResponse.json({ courses: JSON.parse(cached as string) });
+        }
+      } catch (redisError) {
+        console.warn('Redis cache read failed:', redisError);
+      }
     }
 
     await connectDB();
@@ -27,8 +33,14 @@ export async function GET(req: NextRequest) {
       .limit(50)
       .lean();
 
-    // Cache for 5 minutes
-    await redisClient.set(cacheKey, JSON.stringify(courses), { ex: 300 });
+    // Try to cache (only if Redis is available)
+    if (redisClient) {
+      try {
+        await redisClient.set(cacheKey, JSON.stringify(courses), { ex: 300 });
+      } catch (redisError) {
+        console.warn('Redis cache write failed:', redisError);
+      }
+    }
 
     return NextResponse.json({ courses });
   } catch (error) {
