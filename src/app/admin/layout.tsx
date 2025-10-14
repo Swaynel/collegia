@@ -61,7 +61,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         key={item.name}
         href={item.href}
         className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-          isActive ? 'bg-accent text-white' : 'hover:bg-accent hover:text-white'
+          isActive ? 'bg-gray-50 dark:bg-gray-800 text-white' : 'hover:bg-gray-50 dark:bg-gray-800 hover:text-white'
         }`}
         onClick={() => setSidebarOpen(false)}
       >
@@ -72,7 +72,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-white dark:bg-gray-900">
       {/* Mobile sidebar */}
       <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
         {/* Overlay */}
@@ -100,7 +100,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Desktop sidebar */}
       <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
-        <div className="flex flex-col flex-1 min-h-0 border-r bg-card">
+        <div className="flex flex-col flex-1 min-h-0 border-r  bg-white dark:bg-gray-900">
           <div className="flex items-center h-16 flex-shrink-0 px-4 border-b">
             <span className="text-lg font-semibold">Admin Panel</span>
           </div>
@@ -112,7 +112,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <div className="flex items-center">
                 <div className="ml-3">
                   <p className="text-sm font-medium">{user.fullName}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300 capitalize">{user.role}</p>
                 </div>
               </div>
               <Button variant="ghost" size="sm" onClick={handleLogout}>
@@ -126,7 +126,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main content */}
       <div className="lg:pl-64 flex flex-col flex-1">
         {/* Mobile top bar */}
-        <div className="sticky top-0 z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-card">
+        <div className="sticky top-0 z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3  bg-white dark:bg-gray-900">
           <Button
             variant="ghost"
             className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center"

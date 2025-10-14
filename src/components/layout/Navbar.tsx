@@ -14,15 +14,15 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="border-b bg-white dark:bg-gray-900/95 backdrop-blur supports-[backdrop-filter]:bg-white dark:bg-gray-900/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">OC</span>
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-gray-900 dark:text-white font-bold text-sm">OC</span>
             </div>
-            <span className="font-bold text-xl">Online College</span>
+            <span className="font-bold text-xl">Collegia</span>
           </Link>
 
           {/* Desktop Navigation */}

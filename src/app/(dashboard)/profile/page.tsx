@@ -73,7 +73,7 @@ export default function ProfilePage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Profile Settings</h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
           Manage your account information and preferences
         </p>
       </div>
@@ -105,12 +105,12 @@ export default function ProfilePage() {
                 <Mail className="h-4 w-4 mr-1" />
                 Email Address
               </label>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">{user.email}</p>
             </div>
             
             <div>
               <label className="text-sm font-medium mb-2 block">Role</label>
-              <p className="text-sm text-muted-foreground capitalize">{user.role}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300 capitalize">{user.role}</p>
             </div>
 
             <div className="flex space-x-2">
@@ -149,12 +149,12 @@ export default function ProfilePage() {
                 <Calendar className="h-4 w-4 mr-1" />
                 Status
               </label>
-              <p className="text-sm text-muted-foreground capitalize">{user.subscription.status}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300 capitalize">{user.subscription.status}</p>
             </div>
             
             <div>
               <label className="text-sm font-medium mb-2 block">Member Since</label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 {new Date(user.subscription.startDate).toLocaleDateString()}
               </p>
             </div>
@@ -162,7 +162,7 @@ export default function ProfilePage() {
             {user.subscription.endDate && (
               <div>
                 <label className="text-sm font-medium mb-2 block">Subscription Ends</label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   {new Date(user.subscription.endDate).toLocaleDateString()}
                 </p>
               </div>
@@ -184,15 +184,15 @@ export default function ProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
             <div className="p-4 border rounded-lg">
               <div className="text-2xl font-bold text-primary">5</div>
-              <div className="text-sm text-muted-foreground">Courses Enrolled</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Courses Enrolled</div>
             </div>
             <div className="p-4 border rounded-lg">
               <div className="text-2xl font-bold text-primary">12</div>
-              <div className="text-sm text-muted-foreground">Lessons Completed</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Lessons Completed</div>
             </div>
             <div className="p-4 border rounded-lg">
               <div className="text-2xl font-bold text-primary">24</div>
-              <div className="text-sm text-muted-foreground">Learning Hours</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Learning Hours</div>
             </div>
           </div>
         </CardContent>

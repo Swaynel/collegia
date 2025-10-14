@@ -62,11 +62,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({
       </CardHeader>
       
       <CardContent className="pb-4">
-        <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
+        <p className="mb-4 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
           {description}
         </p>
         
-        <div className="mb-4 flex items-center justify-between text-sm text-muted-foreground">
+        <div className="mb-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
           <div className="flex items-center space-x-4">
             <div className="flex items-center">
               <Users className="mr-1 h-4 w-4" />

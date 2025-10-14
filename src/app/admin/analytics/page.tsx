@@ -24,7 +24,7 @@ export default function AdminAnalyticsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
           Overview of platform performance and user engagement
         </p>
       </div>
@@ -35,7 +35,7 @@ export default function AdminAnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Revenue</p>
                 <p className="text-2xl font-bold mt-1">
                   KES {analyticsData.totalRevenue.toLocaleString()}
                 </p>
@@ -53,7 +53,7 @@ export default function AdminAnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Users</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Active Users</p>
                 <p className="text-2xl font-bold mt-1">{analyticsData.activeUsers}</p>
                 <p className="text-xs text-green-600 mt-1 flex items-center">
                   <TrendingUp className="h-3 w-3 mr-1" />
@@ -69,7 +69,7 @@ export default function AdminAnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Courses</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Courses</p>
                 <p className="text-2xl font-bold mt-1">{analyticsData.totalCourses}</p>
                 <p className="text-xs text-green-600 mt-1 flex items-center">
                   <TrendingUp className="h-3 w-3 mr-1" />
@@ -85,7 +85,7 @@ export default function AdminAnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Completion Rate</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Completion Rate</p>
                 <p className="text-2xl font-bold mt-1">{analyticsData.completionRate}%</p>
                 <p className="text-xs text-green-600 mt-1 flex items-center">
                   <TrendingUp className="h-3 w-3 mr-1" />
@@ -105,8 +105,8 @@ export default function AdminAnalyticsPage() {
             <CardTitle>Revenue Overview</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64 bg-muted rounded-lg flex items-center justify-center">
-              <p className="text-muted-foreground">Revenue chart would be displayed here</p>
+            <div className="h-64 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+              <p className="text-gray-600 dark:text-gray-300">Revenue chart would be displayed here</p>
             </div>
           </CardContent>
         </Card>
@@ -117,8 +117,8 @@ export default function AdminAnalyticsPage() {
             <CardTitle>User Growth</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64 bg-muted rounded-lg flex items-center justify-center">
-              <p className="text-muted-foreground">User growth chart would be displayed here</p>
+            <div className="h-64 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+              <p className="text-gray-600 dark:text-gray-300">User growth chart would be displayed here</p>
             </div>
           </CardContent>
         </Card>
@@ -134,17 +134,17 @@ export default function AdminAnalyticsPage() {
             {recentActivities.map((activity, index) => (
               <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                 <div className="flex items-center space-x-3">
-                  <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-medium">
+                  <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-gray-900 dark:text-white text-sm font-medium">
                     {activity.user.charAt(0).toUpperCase()}
                   </div>
                   <div>
                     <p className="font-medium">
                       <span className="text-primary">{activity.user}</span> {activity.action}
                     </p>
-                    <p className="text-sm text-muted-foreground">in {activity.course}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">in {activity.course}</p>
                   </div>
                 </div>
-                <span className="text-sm text-muted-foreground">{activity.time}</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">{activity.time}</span>
               </div>
             ))}
           </div>

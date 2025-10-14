@@ -55,7 +55,7 @@ export const Modal: React.FC<ModalProps> = ({
       {/* Backdrop */}
       <div
         className={cn(
-          'absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity',
+          'absolute inset-0 bg-white dark:bg-gray-900/80 backdrop-blur-sm transition-opacity',
           isOpen ? 'opacity-100' : 'opacity-0'
         )}
         onClick={onClose}
@@ -64,7 +64,7 @@ export const Modal: React.FC<ModalProps> = ({
       {/* Modal */}
       <div
         className={cn(
-          'relative bg-background border rounded-lg shadow-lg max-w-md w-full mx-4 transform transition-all',
+          'relative bg-white dark:bg-gray-900 border rounded-lg shadow-lg max-w-md w-full mx-4 transform transition-all',
           isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0',
           className
         )}

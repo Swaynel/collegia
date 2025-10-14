@@ -74,8 +74,8 @@ export default function CoursesPage() {
     return (
       <div className="flex justify-center items-center min-h-64">
         <div className="text-center">
-          <BookOpen className="h-8 w-8 text-muted-foreground mx-auto mb-4 animate-pulse" />
-          <p className="text-muted-foreground">Loading courses...</p>
+          <BookOpen className="h-8 w-8 text-gray-600 dark:text-gray-300 mx-auto mb-4 animate-pulse" />
+          <p className="text-gray-600 dark:text-gray-300">Loading courses...</p>
         </div>
       </div>
     );
@@ -85,7 +85,7 @@ export default function CoursesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">All Courses</h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
           Browse and enroll in our comprehensive course catalog
         </p>
       </div>
@@ -95,7 +95,7 @@ export default function CoursesPage() {
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-600 dark:text-gray-300" />
               <Input
                 placeholder="Search courses..."
                 value={searchTerm}
@@ -104,11 +104,11 @@ export default function CoursesPage() {
               />
             </div>
             <div className="flex items-center space-x-2">
-              <Filter className="h-4 w-4 text-muted-foreground" />
+              <Filter className="h-4 w-4 text-gray-600 dark:text-gray-300" />
               <select
                 value={selectedTier}
                 onChange={(e) => setSelectedTier(e.target.value)}
-                className="px-3 py-2 border rounded-md bg-background text-sm"
+                className="px-3 py-2 border rounded-md bg-white dark:bg-gray-900 text-sm"
               >
                 <option value="all">All Tiers</option>
                 <option value="basics">Basics</option>
@@ -126,7 +126,7 @@ export default function CoursesPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Courses</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Courses</p>
                 <p className="text-2xl font-bold mt-1">{courses.length}</p>
               </div>
               <BookOpen className="h-8 w-8 text-blue-600" />
@@ -138,7 +138,7 @@ export default function CoursesPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Available Tiers</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Available Tiers</p>
                 <p className="text-2xl font-bold mt-1">3</p>
               </div>
               <BookOpen className="h-8 w-8 text-green-600" />
@@ -150,7 +150,7 @@ export default function CoursesPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Your Enrollments</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Your Enrollments</p>
                 <p className="text-2xl font-bold mt-1">
                   {courses.filter(c => c.enrolledCount > 0).length}
                 </p>
@@ -189,9 +189,9 @@ export default function CoursesPage() {
         ) : (
           <Card>
             <CardContent className="p-12 text-center">
-              <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <BookOpen className="h-12 w-12 text-gray-600 dark:text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No courses found</h3>
-              <p className="text-muted-foreground">
+              <p className="text-gray-600 dark:text-gray-300">
                 {courses.length === 0 
                   ? 'No courses available yet.' 
                   : 'Try adjusting your search filters.'}
@@ -213,7 +213,7 @@ export default function CoursesPage() {
                 <BookOpen className="h-6 w-6" />
               </div>
               <h3 className="font-semibold mb-2">Basics</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Free introductory courses covering fundamental concepts and skills.
               </p>
             </div>
@@ -223,7 +223,7 @@ export default function CoursesPage() {
                 <BookOpen className="h-6 w-6" />
               </div>
               <h3 className="font-semibold mb-2">Intermediate</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Advanced topics with practical projects and live class access.
               </p>
             </div>
@@ -233,7 +233,7 @@ export default function CoursesPage() {
                 <BookOpen className="h-6 w-6" />
               </div>
               <h3 className="font-semibold mb-2">Advanced</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Expert-level content with personalized mentorship and certificates.
               </p>
             </div>

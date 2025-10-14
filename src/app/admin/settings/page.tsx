@@ -31,7 +31,7 @@ export default function AdminSettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Admin Settings</h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
           Configure platform settings and preferences
         </p>
       </div>
@@ -97,7 +97,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-sm font-medium">Enable User Registrations</label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Allow new users to create accounts
                 </p>
               </div>
@@ -110,7 +110,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-sm font-medium">Require Email Verification</label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Users must verify their email before accessing the platform
                 </p>
               </div>
@@ -134,7 +134,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-sm font-medium">Maintenance Mode</label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Temporarily disable the platform for maintenance
                 </p>
               </div>
@@ -158,7 +158,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-sm font-medium">Email Notifications</label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Send email notifications for important events
                 </p>
               </div>
@@ -168,7 +168,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-sm font-medium">Push Notifications</label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Enable browser push notifications
                 </p>
               </div>

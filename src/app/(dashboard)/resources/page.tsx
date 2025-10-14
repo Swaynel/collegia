@@ -89,7 +89,7 @@ export default function ResourcesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Learning Resources</h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
           Access supplementary materials and external resources for your courses.
         </p>
       </div>
@@ -99,7 +99,7 @@ export default function ResourcesPage() {
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-600 dark:text-gray-300" />
               <Input
                 placeholder="Search resources..."
                 value={searchTerm}
@@ -110,7 +110,7 @@ export default function ResourcesPage() {
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="px-3 py-2 border rounded-md bg-background"
+              className="px-3 py-2 border rounded-md bg-white dark:bg-gray-900"
             >
               <option value="all">All Types</option>
               <option value="pdf">PDF</option>
@@ -130,13 +130,13 @@ export default function ResourcesPage() {
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-4">
-                  <div className="p-2 rounded-lg bg-muted">
+                  <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
                     {getIconForType(resource.type)}
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg mb-1">{resource.title}</h3>
-                    <p className="text-muted-foreground mb-2">{resource.description}</p>
-                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                    <p className="text-gray-600 dark:text-gray-300 mb-2">{resource.description}</p>
+                    <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300">
                       <span className="capitalize">{resource.courseId?.title}</span>
                       <span>•</span>
                       <span className="capitalize">{resource.tier}</span>
@@ -166,9 +166,9 @@ export default function ResourcesPage() {
       {filteredResources.length === 0 && (
         <Card>
           <CardContent className="p-12 text-center">
-            <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <FileText className="h-12 w-12 text-gray-600 dark:text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">No resources found</h3>
-            <p className="text-muted-foreground">
+            <p className="text-gray-600 dark:text-gray-300">
               {resources.length === 0 
                 ? 'No resources available yet.' 
                 : 'Try adjusting your search filters.'}

@@ -5,14 +5,13 @@ import './globals.css';
 // Load Inter font
 const inter = Inter({ subsets: ['latin'] });
 
-// Global metadata (title, description, manifest, etc.)
+// Global metadata
 export const metadata: Metadata = {
-  title: 'Online College - Quality Education for Everyone',
-  description: 'Access world-class courses and resources with flexible learning paths designed for African learners.',
+  title: 'Collegia - Quality Education for Everyone',
+  description:
+    'Access world-class courses and resources with flexible learning paths designed for African learners.',
   manifest: '/manifest.json',
-
 };
-
 
 export function generateViewport() {
   return {
@@ -21,11 +20,11 @@ export function generateViewport() {
     minimumScale: 1,
     maximumScale: 1,
     userScalable: true,
-    themeColor: '#000000', // global themeColor
+    themeColor: '#000000',
   };
 }
 
-// Root layout component
+// Root layout
 export default function RootLayout({
   children,
 }: {
@@ -33,12 +32,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={inter.className}>
-        <div className="min-h-screen bg-background text-foreground">
-          {children}
-        </div>
+      <body className={`${inter.className} min-h-screen`}>
+        {children}
       </body>
     </html>
-
   );
 }

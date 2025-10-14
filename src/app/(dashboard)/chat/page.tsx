@@ -86,7 +86,7 @@ export default function ChatPage() {
     <div className="h-full flex flex-col">
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Course Chat</h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
           Discuss with your classmates and instructors
         </p>
       </div>
@@ -102,7 +102,7 @@ export default function ChatPage() {
           {/* Messages Area */}
           <div className="h-96 overflow-y-auto p-4 space-y-4">
             {messages.length === 0 ? (
-              <div className="text-center text-muted-foreground py-8">
+              <div className="text-center text-gray-600 dark:text-gray-300 py-8">
                 <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>No messages yet. Start the conversation!</p>
               </div>
@@ -110,18 +110,18 @@ export default function ChatPage() {
               messages.map((message) => (
                 <div key={message._id} className="flex space-x-3">
                   <div className="flex-shrink-0">
-                    <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-medium">
+                    <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-gray-900 dark:text-white text-sm font-medium">
                       {message.username.charAt(0).toUpperCase()}
                     </div>
                   </div>
                   <div className="flex-1">
                     <div className="flex items-baseline space-x-2">
                       <span className="font-medium text-sm">{message.username}</span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-gray-600 dark:text-gray-300">
                         {new Date(message.createdAt).toLocaleTimeString()}
                       </span>
                       {message.isEdited && (
-                        <span className="text-xs text-muted-foreground">(edited)</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-300">(edited)</span>
                       )}
                     </div>
                     <p className="text-sm mt-1">{message.message}</p>

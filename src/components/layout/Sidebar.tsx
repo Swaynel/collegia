@@ -77,8 +77,8 @@ export const Sidebar = ({ className }: SidebarProps) => {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-accent',
-                    pathname === item.href && 'bg-accent'
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-gray-50 dark:bg-gray-800',
+                    pathname === item.href && 'bg-gray-50 dark:bg-gray-800'
                   )}
                 >
                   <Icon className="h-4 w-4" />

@@ -76,7 +76,7 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">User Management</h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
           Manage all users, instructors, and administrators
         </p>
       </div>
@@ -87,10 +87,10 @@ export default function AdminUsersPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Users</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Users</p>
                 <p className="text-2xl font-bold mt-1">{users.length}</p>
               </div>
-              <Users className="h-8 w-8 text-muted-foreground" />
+              <Users className="h-8 w-8 text-gray-600 dark:text-gray-300" />
             </div>
           </CardContent>
         </Card>
@@ -99,7 +99,7 @@ export default function AdminUsersPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Students</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Students</p>
                 <p className="text-2xl font-bold mt-1">
                   {users.filter(u => u.role === 'student').length}
                 </p>
@@ -113,7 +113,7 @@ export default function AdminUsersPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Instructors</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Instructors</p>
                 <p className="text-2xl font-bold mt-1">
                   {users.filter(u => u.role === 'instructor').length}
                 </p>
@@ -127,7 +127,7 @@ export default function AdminUsersPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Active</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Active</p>
                 <p className="text-2xl font-bold mt-1">
                   {users.filter(u => u.subscription.status === 'active').length}
                 </p>
@@ -143,7 +143,7 @@ export default function AdminUsersPage() {
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-600 dark:text-gray-300" />
               <Input
                 placeholder="Search users by name or email..."
                 value={searchTerm}
@@ -166,12 +166,12 @@ export default function AdminUsersPage() {
             {filteredUsers.map((user) => (
               <div key={user._id} className="flex items-center justify-between p-4 border rounded-lg">
                 <div className="flex items-center space-x-4">
-                  <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-medium">
+                  <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center text-gray-900 dark:text-white font-medium">
                     {user.fullName.charAt(0).toUpperCase()}
                   </div>
                   <div>
                     <h3 className="font-semibold">{user.fullName}</h3>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
                       <Mail className="h-3 w-3" />
                       <span>{user.email}</span>
                       <span>•</span>
@@ -202,9 +202,9 @@ export default function AdminUsersPage() {
 
           {filteredUsers.length === 0 && (
             <div className="text-center py-8">
-              <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <Users className="h-12 w-12 text-gray-600 dark:text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No users found</h3>
-              <p className="text-muted-foreground">
+              <p className="text-gray-600 dark:text-gray-300">
                 {users.length === 0 
                   ? 'No users registered yet.' 
                   : 'Try adjusting your search term.'}

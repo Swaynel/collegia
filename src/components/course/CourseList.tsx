@@ -21,7 +21,7 @@ export const CourseList: React.FC<CourseListProps> = ({ courses, onEnroll }) => 
   if (courses.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">No courses available.</p>
+        <p className="text-gray-600 dark:text-gray-300">No courses available.</p>
       </div>
     );
   }

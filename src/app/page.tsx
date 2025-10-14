@@ -28,7 +28,7 @@ export default function HomePage() {
               Quality Education for{' '}
               <span className="text-blue-600 dark:text-blue-400">Everyone</span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
               Access world-class courses and resources with flexible learning paths designed for African learners.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -48,7 +48,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-background">
+      <section className="py-16 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -56,7 +56,7 @@ export default function HomePage() {
                 <div className="text-3xl font-bold text-primary mb-2">
                   {stat.number}
                 </div>
-                <div className="text-muted-foreground">{stat.label}</div>
+                <div className="text-gray-600 dark:text-gray-300">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -64,10 +64,10 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-muted/50">
+      <section className="py-16 bg-gray-100 dark:bg-gray-800/50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">
-            Why Choose Online College?
+            Why Choose Collegia?
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <Card>
@@ -76,7 +76,7 @@ export default function HomePage() {
                 <CardTitle>Expert Instructors</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
+                <p className="text-gray-600 dark:text-gray-300">
                   Learn from industry professionals with years of experience in their fields.
                 </p>
               </CardContent>
@@ -88,7 +88,7 @@ export default function HomePage() {
                 <CardTitle>Flexible Learning</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
+                <p className="text-gray-600 dark:text-gray-300">
                   Study at your own pace with courses designed for busy schedules.
                 </p>
               </CardContent>
@@ -100,7 +100,7 @@ export default function HomePage() {
                 <CardTitle>Community Support</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
+                <p className="text-gray-600 dark:text-gray-300">
                   Join a vibrant community of learners and get support when you need it.
                 </p>
               </CardContent>
@@ -110,7 +110,7 @@ export default function HomePage() {
       </section>
 
       {/* Partners Section */}
-      <section className="py-16 bg-background">
+      <section className="py-16 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">
             Trusted by Leading Organizations
@@ -119,9 +119,9 @@ export default function HomePage() {
             {partners.map((partner, index) => (
               <div
                 key={index}
-                className="h-16 w-32 bg-muted rounded-lg flex items-center justify-center"
+                className="h-16 w-32 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center"
               >
-                <span className="text-sm font-medium text-muted-foreground">
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                   {partner.name}
                 </span>
               </div>
@@ -131,7 +131,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-primary text-primary-foreground">
+      <section className="py-16 bg-blue-600 text-gray-900 dark:text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">
             Ready to Start Your Learning Journey?

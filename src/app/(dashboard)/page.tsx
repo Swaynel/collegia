@@ -54,7 +54,7 @@ export default function DashboardPage() {
       {/* Welcome Section */}
       <div>
         <h1 className="text-3xl font-bold">Welcome Back!</h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
           Continue your learning journey with these recommended courses.
         </p>
       </div>
@@ -66,7 +66,7 @@ export default function DashboardPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     {stat.label}
                   </p>
                   <p className="text-2xl font-bold mt-1">{stat.value}</p>
@@ -118,7 +118,7 @@ export default function DashboardPage() {
                   <p className="text-sm font-medium">
                     Completed lesson: Introduction to Web Development
                   </p>
-                  <p className="text-xs text-muted-foreground">2 hours ago</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">2 hours ago</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
@@ -127,7 +127,7 @@ export default function DashboardPage() {
                   <p className="text-sm font-medium">
                     Enrolled in: Advanced JavaScript Patterns
                   </p>
-                  <p className="text-xs text-muted-foreground">1 day ago</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">1 day ago</p>
                 </div>
               </div>
             </div>

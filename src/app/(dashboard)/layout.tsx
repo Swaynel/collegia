@@ -55,14 +55,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-muted-foreground">
+      <div className="flex items-center justify-center min-h-screen text-gray-600 dark:text-gray-300">
         Loading...
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-white dark:bg-gray-900">
       {/* -------------------- MOBILE SIDEBAR -------------------- */}
       <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
         {/* Overlay */}
@@ -73,7 +73,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         {/* Sidebar panel */}
         <div className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-900 shadow-lg">
           <div className="flex items-center justify-between h-16 px-4 border-b">
-            <span className="text-lg font-semibold">Online College</span>
+            <span className="text-lg font-semibold">Collegia</span>
             <Button variant="ghost" size="sm" onClick={() => setSidebarOpen(false)}>
               <X className="h-5 w-5" />
             </Button>
@@ -84,7 +84,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <Link
                 key={item.name}
                 href={item.href}
-                className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
+                className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-50 dark:bg-gray-800"
                 onClick={() => setSidebarOpen(false)}
               >
                 <item.icon className="mr-3 h-5 w-5" />
@@ -97,10 +97,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* -------------------- DESKTOP SIDEBAR -------------------- */}
       <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
-        <div className="flex flex-col flex-1 min-h-0 border-r bg-card">
+        <div className="flex flex-col flex-1 min-h-0 border-r  bg-white dark:bg-gray-900">
           {/* Header */}
           <div className="flex items-center h-16 flex-shrink-0 px-4 border-b">
-            <span className="text-lg font-semibold">Online College</span>
+            <span className="text-lg font-semibold">Collegia</span>
           </div>
 
           {/* Navigation */}
@@ -109,7 +109,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <Link
                 key={item.name}
                 href={item.href}
-                className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
+                className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-50 dark:bg-gray-800"
               >
                 <item.icon className="mr-3 h-5 w-5" />
                 {item.name}
@@ -123,7 +123,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <div className="flex items-center">
                 <div className="ml-3">
                   <p className="text-sm font-medium">{user.fullName}</p>
-                  <p className="text-xs text-muted-foreground capitalize">
+                  <p className="text-xs text-gray-600 dark:text-gray-300 capitalize">
                     {user.subscription.tier} Plan
                   </p>
                 </div>
@@ -139,7 +139,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* -------------------- MAIN CONTENT -------------------- */}
       <div className="lg:pl-64 flex flex-col flex-1">
         {/* Mobile top bar */}
-        <div className="sticky top-0 z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-card">
+        <div className="sticky top-0 z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3  bg-white dark:bg-gray-900">
           <Button
             variant="ghost"
             className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center"
