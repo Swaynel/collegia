@@ -1,7 +1,7 @@
 // app/login/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
@@ -14,35 +14,44 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const hasAttemptedSilentLogin = useRef(false);
 
   useEffect(() => {
+    if (hasAttemptedSilentLogin.current) return;
+    hasAttemptedSilentLogin.current = true;
+
     const attemptSilentLogin = async () => {
-      // First, check if we're already authenticated
-      const authCheck = await fetch('/api/auth/me', {
-        credentials: 'include',
-      });
-
-      if (authCheck.ok) {
-        router.push('/dashboard');
-        return;
-      }
-
-      // If not, try to refresh session
-      const refreshRes = await fetch('/api/auth/refresh', {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (refreshRes.ok) {
-        // Verify new session
-        const secondCheck = await fetch('/api/auth/me', {
+      try {
+        // Step 1: Check if already authenticated
+        const authCheck = await fetch('/api/auth/me', {
           credentials: 'include',
         });
-        if (secondCheck.ok) {
+
+        if (authCheck.ok) {
           router.push('/dashboard');
+          return;
         }
+
+        // Step 2: Try to refresh session
+        const refreshRes = await fetch('/api/auth/refresh', {
+          method: 'POST',
+          credentials: 'include',
+        });
+
+        if (refreshRes.ok) {
+          // Step 3: Confirm new session
+          const secondCheck = await fetch('/api/auth/me', {
+            credentials: 'include',
+          });
+          if (secondCheck.ok) {
+            router.push('/dashboard');
+            return;
+          }
+        }
+        // If all fails, show login form
+      } catch (err) {
+        console.error('Silent login failed:', err);
       }
-      // If all fails, stay on login (user will log in manually)
     };
 
     attemptSilentLogin();
@@ -50,6 +59,8 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
+
     setLoading(true);
     setError('');
 
@@ -64,7 +75,6 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        // Final verification before redirect
         const check = await fetch('/api/auth/me', { credentials: 'include' });
         if (check.ok) {
           router.push('/dashboard');
