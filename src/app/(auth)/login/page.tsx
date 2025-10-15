@@ -1,8 +1,9 @@
+// app/login/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -10,14 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 interface LoginResponse {
   success?: boolean;
   error?: string;
-  user?: {
-    id: string;
-    email: string;
-    fullName: string;
-    role: string;
-    subscription: string;
-  };
-  token?: string;
+  user?: any;
 }
 
 export default function LoginPage() {
@@ -27,16 +21,31 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  // Auto-refresh if refresh_token exists
+  useEffect(() => {
+    const attemptSilentRefresh = async () => {
+      const hasRefresh = document.cookie.includes('refresh_token=');
+      const hasAccess = document.cookie.includes('access_token=');
+      if (!hasAccess && hasRefresh) {
+        const res = await fetch('/api/auth/refresh', {
+          method: 'POST',
+          credentials: 'include',
+        });
+        if (res.ok) {
+          router.push('/dashboard');
+        }
+      }
+    };
+    attemptSilentRefresh();
+  }, [router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-      const loginUrl = `${baseUrl}/api/auth/login`;
-
-      const response = await fetch(loginUrl, {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -46,14 +55,18 @@ export default function LoginPage() {
       const data: LoginResponse = await response.json();
 
       if (response.ok && data.success) {
-        console.log('Login successful!', data.user);
-        router.push('/dashboard'); // redirect after login
+        // Confirm session is active before redirect
+        const check = await fetch('/api/auth/me', { credentials: 'include' });
+        if (check.ok) {
+          router.push('/dashboard');
+        } else {
+          setError('Session setup failed. Please try again.');
+        }
       } else {
-        setError(data.error || 'Login failed. Please try again.');
+        setError(data.error || 'Login failed. Please check your credentials.');
       }
     } catch (err) {
-      console.error('❌ Login request failed:', err);
-      setError(err instanceof Error ? err.message : 'Network error. Try again.');
+      setError('Network error. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -68,7 +81,6 @@ export default function LoginPage() {
             Sign in to your account to continue
           </p>
         </CardHeader>
-
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
@@ -76,43 +88,33 @@ export default function LoginPage() {
                 {error}
               </div>
             )}
-
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email Address
-              </label>
+              <label htmlFor="email" className="text-sm font-medium">Email Address</label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
-
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
-                Password
-              </label>
+              <label htmlFor="password" className="text-sm font-medium">Password</label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
-
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
-
           <div className="mt-6 text-center text-sm">
             <span className="text-gray-600 dark:text-gray-300">
-              Don&apos;t have an account?{' '}
+              Don't have an account?{' '}
             </span>
             <Link href="/register" className="text-primary hover:underline">
               Sign up

@@ -1,5 +1,5 @@
 // app/api/auth/login/route.ts
-export const runtime = 'nodejs'; // Required for bcryptjs
+export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
@@ -17,18 +17,12 @@ export async function POST(req: NextRequest) {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
     const tokenPayload = {
@@ -50,7 +44,6 @@ export async function POST(req: NextRequest) {
         role: user.role,
         subscription: user.subscription,
       },
-      token: accessToken,
     });
 
     const cookieOptions = {
@@ -62,15 +55,14 @@ export async function POST(req: NextRequest) {
 
     response.cookies.set('access_token', accessToken, {
       ...cookieOptions,
-      maxAge: 15 * 60, // 15 minutes
+      maxAge: 15 * 60,
     });
 
     response.cookies.set('refresh_token', refreshToken, {
       ...cookieOptions,
-      maxAge: 7 * 24 * 60 * 60, // 7 days
+      maxAge: 7 * 24 * 60 * 60,
     });
 
-    console.log('✅ Login successful for:', user.email);
     return response;
   } catch (error: unknown) {
     console.error('Login error:', error);

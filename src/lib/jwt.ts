@@ -13,9 +13,8 @@ export interface JWTPayload {
   exp: number;
 }
 
-// Ensure secret is defined
 if (!process.env.JWT_SECRET) {
-  throw new Error('Missing JWT_SECRET in environment variables');
+  throw new Error('JWT_SECRET is required in environment variables');
 }
 
 const JWT_SECRET = process.env.JWT_SECRET;

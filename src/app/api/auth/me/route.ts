@@ -1,5 +1,5 @@
-// src/app/api/auth/me/route.ts
-export const runtime = 'nodejs'; // 👈 Required for MongoDB
+// app/api/auth/me/route.ts
+export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAccessToken } from '@/lib/jwt';
@@ -9,7 +9,6 @@ import User from '@/models/User';
 export async function GET(req: NextRequest) {
   try {
     const token = req.cookies.get('access_token')?.value;
-    
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
@@ -21,7 +20,6 @@ export async function GET(req: NextRequest) {
 
     await connectDB();
     const user = await User.findById(decoded.userId).select('-password');
-    
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -36,9 +34,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (error: unknown) {
     console.error('Auth me error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch user data' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch user data' }, { status: 500 });
   }
 }
