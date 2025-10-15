@@ -8,12 +8,6 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
-interface LoginResponse {
-  success?: boolean;
-  error?: string;
-  user?: any;
-}
-
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,22 +15,37 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  // Auto-refresh if refresh_token exists
   useEffect(() => {
-    const attemptSilentRefresh = async () => {
-      const hasRefresh = document.cookie.includes('refresh_token=');
-      const hasAccess = document.cookie.includes('access_token=');
-      if (!hasAccess && hasRefresh) {
-        const res = await fetch('/api/auth/refresh', {
-          method: 'POST',
+    const attemptSilentLogin = async () => {
+      // First, check if we're already authenticated
+      const authCheck = await fetch('/api/auth/me', {
+        credentials: 'include',
+      });
+
+      if (authCheck.ok) {
+        router.push('/dashboard');
+        return;
+      }
+
+      // If not, try to refresh session
+      const refreshRes = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (refreshRes.ok) {
+        // Verify new session
+        const secondCheck = await fetch('/api/auth/me', {
           credentials: 'include',
         });
-        if (res.ok) {
+        if (secondCheck.ok) {
           router.push('/dashboard');
         }
       }
+      // If all fails, stay on login (user will log in manually)
     };
-    attemptSilentRefresh();
+
+    attemptSilentLogin();
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,10 +61,10 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data: LoginResponse = await response.json();
+      const data = await response.json();
 
       if (response.ok && data.success) {
-        // Confirm session is active before redirect
+        // Final verification before redirect
         const check = await fetch('/api/auth/me', { credentials: 'include' });
         if (check.ok) {
           router.push('/dashboard');
