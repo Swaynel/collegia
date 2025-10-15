@@ -1,4 +1,6 @@
 // src/app/api/auth/me/route.ts
+export const runtime = 'nodejs'; // 👈 Required for MongoDB
+
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAccessToken } from '@/lib/jwt';
 import connectDB from '@/lib/mongodb';
