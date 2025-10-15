@@ -20,24 +20,32 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://collegia-ebon.vercel.app'}/api/auth/login`, 
-        {
+      // ✅ ensure base URL always includes `/api`
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_BASE_URL || 'https://collegia-ebon.vercel.app/api';
+
+      const response = await fetch(`${baseUrl}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
-      const data = await response.json();
+      
+      let data: any = {};
+      try {
+        data = await response.json();
+      } catch {
+        console.warn('Empty or invalid JSON response from server');
+      }
 
       if (response.ok) {
+        // Optionally, you could store user/token data here if needed
         router.push('/dashboard');
       } else {
-        setError(data.error || 'Login failed');
+        setError(data?.error || 'Login failed. Please check your credentials.');
       }
     } catch (err) {
-      console.error(err);
-      setError('An error occurred. Please try again.');
+      console.error('Login request failed:', err);
+      setError('Network error. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -51,6 +59,7 @@ export default function LoginPage() {
           Sign in to your account to continue
         </p>
       </CardHeader>
+
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -58,7 +67,7 @@ export default function LoginPage() {
               {error}
             </div>
           )}
-          
+
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium">
               Email Address
