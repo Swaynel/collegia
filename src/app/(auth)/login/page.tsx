@@ -7,6 +7,19 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
+interface LoginResponse {
+  success?: boolean;
+  error?: string;
+  user?: {
+    id: string;
+    email: string;
+    fullName: string;
+    role: string;
+    subscription: string;
+  };
+  token?: string;
+}
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +33,6 @@ export default function LoginPage() {
     setError('');
 
     try {
-      // ✅ ensure base URL always includes `/api`
       const baseUrl =
         process.env.NEXT_PUBLIC_API_BASE_URL || 'https://collegia-ebon.vercel.app/api';
 
@@ -29,8 +41,8 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      
-      let data: any = {};
+
+      let data: LoginResponse = {};
       try {
         data = await response.json();
       } catch {
@@ -38,7 +50,6 @@ export default function LoginPage() {
       }
 
       if (response.ok) {
-        // Optionally, you could store user/token data here if needed
         router.push('/dashboard');
       } else {
         setError(data?.error || 'Login failed. Please check your credentials.');
