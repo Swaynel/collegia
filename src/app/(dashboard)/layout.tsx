@@ -1,6 +1,7 @@
+// app/dashboard/layout.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
@@ -35,6 +36,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const hasCheckedAuth = useRef(false);
 
   const refreshSession = async (): Promise<boolean> => {
     try {
@@ -57,7 +59,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
-        setLoading(false);
         return true;
       }
     } catch (error) {
@@ -67,24 +68,32 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   useEffect(() => {
-    const validateAndLoad = async () => {
-      // First, try to load user data
-      const loaded = await fetchUserData();
-      if (loaded) return;
+    if (hasCheckedAuth.current) return;
+    hasCheckedAuth.current = true;
 
-      // If that fails, try to refresh the session
-      const refreshed = await refreshSession();
-      if (refreshed) {
-        // Try again after refresh
-        const secondLoad = await fetchUserData();
-        if (secondLoad) {
+    const validateAndLoad = async () => {
+      try {
+        let loaded = await fetchUserData();
+        if (loaded) {
           setLoading(false);
           return;
         }
-      }
 
-      // If everything fails, redirect to login
-      router.push('/login');
+        const refreshed = await refreshSession();
+        if (refreshed) {
+          loaded = await fetchUserData();
+          if (loaded) {
+            setLoading(false);
+            return;
+          }
+        }
+
+        // If all fails, redirect to login
+        router.push('/login');
+      } catch (err) {
+        console.error('Auth validation error:', err);
+        router.push('/login');
+      }
     };
 
     validateAndLoad();
@@ -121,10 +130,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     );
   }
 
-  // This should not happen due to redirect, but safe guard
   if (!user) {
-    router.push('/login');
-    return null;
+    return null; // Redirect already triggered
   }
 
   return (
