@@ -50,28 +50,33 @@ export async function POST(req: NextRequest) {
       token: accessToken,
     });
 
-    response.cookies.set('access_token', accessToken, {
+    // Fixed cookie settings for Vercel
+    const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 15 * 60,
+      secure: true, // Always true on Vercel (HTTPS)
+      sameSite: 'lax' as const, // Changed from 'strict' to 'lax'
+      path: '/',
+    };
+
+    response.cookies.set('access_token', accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60, // 15 minutes
     });
 
     response.cookies.set('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60,
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60, // 7 days
     });
+
+    console.log('✅ Login successful, cookies set for user:', user.email);
 
     return response;
   } catch (error: unknown) {
-  console.error('Login error:', error);
+    console.error('Login error:', error);
 
-  const message =
-    error instanceof Error ? error.message : 'Login failed';
+    const message =
+      error instanceof Error ? error.message : 'Login failed';
 
-  return NextResponse.json({ error: message }, { status: 400 });
-}
-
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
 }
