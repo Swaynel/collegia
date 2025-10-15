@@ -36,31 +36,41 @@ export default function LoginPage() {
       // Match the same URL pattern as registration
       const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://collegia-ebon.vercel.app';
       const loginUrl = `${baseUrl}/api/auth/login`;
+      
+      console.log('🔍 Login URL:', loginUrl);
+      console.log('📧 Email:', email);
 
       const response = await fetch(loginUrl, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Important for cookies
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
-      let data: LoginResponse = {};
+      console.log('📡 Response status:', response.status);
+      console.log('📄 Content-Type:', response.headers.get('content-type'));
+
       const contentType = response.headers.get('content-type');
+      let data: LoginResponse = {};
       
       if (contentType && contentType.includes('application/json')) {
         data = await response.json();
+        console.log('✅ JSON data:', data);
       } else {
         const text = await response.text();
-        console.warn('Non-JSON response:', text);
-        throw new Error('Server returned non-JSON response');
+        console.error('❌ Non-JSON response:', text.substring(0, 500));
+        setError(`Server error (${response.status}). Check if the API route exists.`);
+        return;
       }
 
       if (response.ok && data.success) {
+        console.log('✨ Login successful!');
         router.push('/dashboard');
       } else {
         const errorMsg = data?.error || `Login failed with status ${response.status}`;
+        console.error('❌ Login error:', errorMsg);
         setError(errorMsg);
       }
     } catch (err) {
