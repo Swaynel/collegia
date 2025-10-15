@@ -33,30 +33,40 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const baseUrl =
-        process.env.NEXT_PUBLIC_API_BASE_URL || 'https://collegia-ebon.vercel.app/api';
+      // Match the same URL pattern as registration
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://collegia-ebon.vercel.app';
+      const loginUrl = `${baseUrl}/api/auth/login`;
 
-      const response = await fetch(`${baseUrl}/auth/login`, {
+      const response = await fetch(loginUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Important for cookies
         body: JSON.stringify({ email, password }),
       });
 
       let data: LoginResponse = {};
-      try {
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
         data = await response.json();
-      } catch {
-        console.warn('Empty or invalid JSON response from server');
+      } else {
+        const text = await response.text();
+        console.warn('Non-JSON response:', text);
+        throw new Error('Server returned non-JSON response');
       }
 
-      if (response.ok) {
+      if (response.ok && data.success) {
         router.push('/dashboard');
       } else {
-        setError(data?.error || 'Login failed. Please check your credentials.');
+        const errorMsg = data?.error || `Login failed with status ${response.status}`;
+        setError(errorMsg);
       }
     } catch (err) {
       console.error('Login request failed:', err);
-      setError('Network error. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Network error. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
