@@ -46,7 +46,7 @@ export default function LoginPage() {
       const data: LoginResponse = await response.json();
 
       if (response.ok && data.success) {
-        console.log('✨ Login successful!', data.user);
+        console.log('Login successful!', data.user);
         router.push('/dashboard'); // redirect after login
       } else {
         setError(data.error || 'Login failed. Please try again.');

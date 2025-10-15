@@ -37,29 +37,26 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
+    // Fetch user data for display purposes only
+    // Middleware already handles auth protection
+    fetchUserData();
   }, []);
 
-  const checkAuth = async () => {
+  const fetchUserData = async () => {
     try {
-      console.log('🔐 Checking authentication...');
       const response = await fetch('/api/auth/me', {
         credentials: 'include',
       });
 
-      console.log('📡 Auth response status:', response.status);
-
       if (response.ok) {
         const userData = await response.json();
-        console.log('✅ User authenticated:', userData);
         setUser(userData);
       } else {
-        console.log('❌ Not authenticated, redirecting to login...');
-        router.push('/login');
+        // If this fails, middleware will redirect on next navigation
+        console.error('Failed to fetch user data');
       }
     } catch (error) {
-      console.error('❌ Auth check failed:', error);
-      router.push('/login');
+      console.error('Error fetching user data:', error);
     } finally {
       setLoading(false);
     }
@@ -67,7 +64,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const handleLogout = async () => {
     try {
-      console.log('🚪 Logging out...');
       await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
@@ -95,10 +91,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
       </div>
     );
-  }
-
-  if (!user) {
-    return null; // Will redirect to login
   }
 
   return (
@@ -134,19 +126,21 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </nav>
 
           {/* Mobile user footer */}
-          <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{user.fullName}</p>
-                <p className="text-xs text-gray-600 dark:text-gray-300 capitalize">
-                  {user.subscription.tier} Plan
-                </p>
+          {user && (
+            <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{user.fullName}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300 capitalize">
+                    {user.subscription.tier} Plan
+                  </p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={handleLogout}>
+                  <LogOut className="h-4 w-4" />
+                </Button>
               </div>
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
-                <LogOut className="h-4 w-4" />
-              </Button>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -173,19 +167,21 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </nav>
 
           {/* User footer section */}
-          <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{user.fullName}</p>
-                <p className="text-xs text-gray-600 dark:text-gray-300 capitalize">
-                  {user.subscription.tier} Plan
-                </p>
+          {user && (
+            <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{user.fullName}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300 capitalize">
+                    {user.subscription.tier} Plan
+                  </p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={handleLogout} title="Logout">
+                  <LogOut className="h-4 w-4" />
+                </Button>
               </div>
-              <Button variant="ghost" size="sm" onClick={handleLogout} title="Logout">
-                <LogOut className="h-4 w-4" />
-              </Button>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
