@@ -27,21 +27,6 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  // Redirect if already logged in
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await fetch('/api/auth/me', { credentials: 'include' });
-        if (res.ok) {
-          router.push('/dashboard');
-        }
-      } catch (err) {
-        console.log('No active session, stay on login page.');
-      }
-    };
-    checkAuth();
-  }, [router]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -54,7 +39,7 @@ export default function LoginPage() {
       const response = await fetch(loginUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // crucial for HttpOnly cookies
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 

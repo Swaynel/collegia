@@ -1,3 +1,4 @@
+// src/app/api/auth/me/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAccessToken } from '@/lib/jwt';
 import connectDB from '@/lib/mongodb';
