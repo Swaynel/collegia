@@ -34,15 +34,19 @@ export default function RegisterPage() {
     }
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fullName: formData.fullName,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+      const response = await fetch(
+  `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://collegia-ebon.vercel.app'}/api/auth/register`,
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      fullName: formData.fullName,
+      email: formData.email,
+      password: formData.password,
+    }),
+  }
+);
+
 
       const data = await response.json();
 
