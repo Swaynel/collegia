@@ -1,3 +1,6 @@
+// app/api/auth/login/route.ts
+export const runtime = 'nodejs'; // Required for bcryptjs
+
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import connectDB from '@/lib/mongodb';
@@ -50,11 +53,10 @@ export async function POST(req: NextRequest) {
       token: accessToken,
     });
 
-    // Fixed cookie settings for Vercel
     const cookieOptions = {
       httpOnly: true,
-      secure: true, // Always true on Vercel (HTTPS)
-      sameSite: 'lax' as const, // Changed from 'strict' to 'lax'
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
       path: '/',
     };
 
@@ -68,15 +70,11 @@ export async function POST(req: NextRequest) {
       maxAge: 7 * 24 * 60 * 60, // 7 days
     });
 
-    console.log('✅ Login successful, cookies set for user:', user.email);
-
+    console.log('✅ Login successful for:', user.email);
     return response;
   } catch (error: unknown) {
     console.error('Login error:', error);
-
-    const message =
-      error instanceof Error ? error.message : 'Login failed';
-
+    const message = error instanceof Error ? error.message : 'Login failed';
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

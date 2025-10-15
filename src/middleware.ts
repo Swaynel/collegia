@@ -1,72 +1,95 @@
 // src/middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyAccessToken } from '@/lib/jwt';
+import { verifyAccessToken, verifyRefreshToken, generateAccessToken } from '@/lib/jwt';
+import connectDB from '@/lib/mongodb';
+import User from '@/models/User';
 
-export function middleware(request: NextRequest) {
-  const token = request.cookies.get('access_token')?.value;
+export async function middleware(request: NextRequest) {
+  const accessToken = request.cookies.get('access_token')?.value;
+  const refreshToken = request.cookies.get('refresh_token')?.value;
   const { pathname } = request.nextUrl;
-  
-  // Define protected routes
+
   const protectedPaths = ['/dashboard', '/admin', '/chat'];
   const isProtected = protectedPaths.some(path => pathname.startsWith(path));
-  
-  // Define auth pages (login, register, etc.)
-  const authPaths = ['/login', '/register'];
-  const isAuthPage = authPaths.some(path => pathname.startsWith(path));
-  
-  // Case 1: Authenticated user trying to access auth pages (login/register)
-  // Redirect them to dashboard
-  if (token && isAuthPage) {
-    const decoded = verifyAccessToken(token);
+  const isAuthPage = ['/login', '/register'].some(path => pathname.startsWith(path));
+
+  // Authenticated user on auth page → redirect to dashboard
+  if (accessToken && isAuthPage) {
+    const decoded = verifyAccessToken(accessToken);
     if (decoded) {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
   }
-  
-  // Case 2: Unauthenticated user trying to access protected routes
-  // Redirect to login
-  if (isProtected && !token) {
+
+  // Protected route with no access token
+  if (isProtected && !accessToken) {
+    if (refreshToken) {
+      const decodedRefresh = verifyRefreshToken(refreshToken);
+      if (decodedRefresh?.userId) {
+        try {
+          await connectDB();
+          const user = await User.findById(decodedRefresh.userId);
+          if (user) {
+            const newAccessToken = generateAccessToken({
+              userId: user._id.toString(),
+              email: user.email,
+              role: user.role,
+              subscription: user.subscription,
+            });
+
+            const response = NextResponse.next();
+            response.cookies.set('access_token', newAccessToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+              path: '/',
+              maxAge: 15 * 60,
+            });
+            return response;
+          }
+        } catch (error) {
+          console.error('Middleware token refresh error:', error);
+        }
+      }
+
+      // Refresh failed → clear tokens and redirect
+      const response = NextResponse.redirect(new URL('/login', request.url));
+      response.cookies.delete('refresh_token');
+      return response;
+    }
+
+    // No refresh token → force login
     return NextResponse.redirect(new URL('/login', request.url));
   }
-  
-  // Case 3: Token exists, verify it
-  if (token) {
-    const decoded = verifyAccessToken(token);
-    
-    // Invalid token - clear it and redirect to login if on protected route
+
+  // Validate access token if present
+  if (accessToken) {
+    const decoded = verifyAccessToken(accessToken);
     if (!decoded) {
-      const response = isProtected 
+      const response = isProtected
         ? NextResponse.redirect(new URL('/login', request.url))
         : NextResponse.next();
-      
       response.cookies.delete('access_token');
       return response;
     }
-    
-    // Valid token - add user info to headers for API routes
+
+    // Optional: pass user info to API routes via headers
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-user-id', decoded.userId);
     requestHeaders.set('x-user-role', decoded.role);
-    
-    return NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
-    });
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
-  
-  // Case 4: No token, not protected route - allow through
+
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    '/dashboard/:path*', 
-    '/admin/:path*', 
-    '/chat/:path*', 
+    '/dashboard/:path*',
+    '/admin/:path*',
+    '/chat/:path*',
     '/login',
     '/register',
-    '/api/:path*'
   ],
 };

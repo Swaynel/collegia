@@ -1,3 +1,4 @@
+// lib/jwt.ts
 import jwt from 'jsonwebtoken';
 
 export interface JWTPayload {
@@ -12,17 +13,24 @@ export interface JWTPayload {
   exp: number;
 }
 
+// Ensure secret is defined
+if (!process.env.JWT_SECRET) {
+  throw new Error('Missing JWT_SECRET in environment variables');
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
 export function generateAccessToken(payload: Omit<JWTPayload, 'iat' | 'exp'>): string {
-  return jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '15m' });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '15m' });
 }
 
 export function generateRefreshToken(userId: string): string {
-  return jwt.sign({ userId }, process.env.JWT_REFRESH_SECRET!, { expiresIn: '7d' });
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '7d' });
 }
 
 export function verifyAccessToken(token: string): JWTPayload | null {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload;
+    return jwt.verify(token, JWT_SECRET) as JWTPayload;
   } catch {
     return null;
   }
@@ -30,7 +38,7 @@ export function verifyAccessToken(token: string): JWTPayload | null {
 
 export function verifyRefreshToken(token: string): { userId: string } | null {
   try {
-    return jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as { userId: string };
+    return jwt.verify(token, JWT_SECRET) as { userId: string };
   } catch {
     return null;
   }
