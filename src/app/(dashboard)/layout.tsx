@@ -1,8 +1,8 @@
 // app/dashboard/layout.tsx
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { 
@@ -35,8 +35,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
   const router = useRouter();
-  const hasCheckedAuth = useRef(false);
+  const pathname = usePathname();
 
   const refreshSession = async (): Promise<boolean> => {
     try {
@@ -50,7 +51,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     }
   };
 
-  const fetchUserData = async () => {
+  const fetchUserData = async (): Promise<boolean> => {
     try {
       const response = await fetch('/api/auth/me', {
         credentials: 'include',
@@ -68,36 +69,44 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   useEffect(() => {
-    if (hasCheckedAuth.current) return;
-    hasCheckedAuth.current = true;
+    // Prevent multiple auth checks
+    if (authChecked) return;
 
     const validateAndLoad = async () => {
       try {
+        // Try to fetch user with existing token
         let loaded = await fetchUserData();
         if (loaded) {
           setLoading(false);
+          setAuthChecked(true);
           return;
         }
 
+        // Try to refresh the session
         const refreshed = await refreshSession();
         if (refreshed) {
           loaded = await fetchUserData();
           if (loaded) {
             setLoading(false);
+            setAuthChecked(true);
             return;
           }
         }
 
         // If all fails, redirect to login
+        setLoading(false);
+        setAuthChecked(true);
         router.push('/login');
       } catch (err) {
         console.error('Auth validation error:', err);
+        setLoading(false);
+        setAuthChecked(true);
         router.push('/login');
       }
     };
 
     validateAndLoad();
-  }, [router]);
+  }, []); // Only run once on mount
 
   const handleLogout = async () => {
     try {
@@ -108,6 +117,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
+      setUser(null);
+      setAuthChecked(false);
       router.push('/login');
     }
   };
@@ -118,6 +129,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'Chat', href: '/dashboard/chat', icon: MessageSquare },
     { name: 'Profile', href: '/dashboard/profile', icon: Settings },
   ];
+
+  const isActiveLink = (href: string) => {
+    if (href === '/dashboard') {
+      return pathname === '/dashboard';
+    }
+    return pathname?.startsWith(href);
+  };
 
   if (loading) {
     return (
@@ -154,7 +172,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <Link
                 key={item.name}
                 href={item.href}
-                className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                  isActiveLink(item.href)
+                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                    : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
                 onClick={() => setSidebarOpen(false)}
               >
                 <item.icon className="mr-3 h-5 w-5" />
@@ -189,7 +211,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <Link
                 key={item.name}
                 href={item.href}
-                className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                  isActiveLink(item.href)
+                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                    : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
               >
                 <item.icon className="mr-3 h-5 w-5" />
                 {item.name}
