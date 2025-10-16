@@ -77,7 +77,7 @@ export default function LoginPage() {
       if (response.ok && data.success) {
         const check = await fetch('/api/auth/me', { credentials: 'include' });
         if (check.ok) {
-          router.push('/dashboard');
+          router.push('/');
         } else {
           setError('Session setup failed. Please try again.');
         }
