@@ -1,54 +1,82 @@
-import mongoose, { Schema, Document } from 'mongoose';
+// models/User.ts
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IUser extends Document {
+  _id: mongoose.Types.ObjectId;
+  fullName: string;
   email: string;
   password: string;
-  fullName: string;
   role: 'student' | 'instructor' | 'admin';
   subscription: {
     tier: 'basics' | 'intermediate' | 'advanced';
     status: 'active' | 'expired' | 'cancelled';
     startDate: Date;
-    endDate: Date;
+    endDate?: Date;
   };
-  enrolledCourses: mongoose.Types.ObjectId[];
-  progress: {
-    courseId: mongoose.Types.ObjectId;
-    completedLessons: number;
-    totalLessons: number;
-    lastAccessedAt: Date;
-  }[];
   onboardingCompleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
+
 const UserSchema = new Schema<IUser>(
   {
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
-    password: { type: String, required: true },
-    fullName: { type: String, required: true, trim: true },
-    role: { type: String, enum: ['student', 'instructor', 'admin'], default: 'student' },
-    subscription: {
-      tier: { type: String, enum: ['basics', 'intermediate', 'advanced'], default: 'basics' },
-      status: { type: String, enum: ['active', 'expired', 'cancelled'], default: 'active' },
-      startDate: { type: Date, default: Date.now },
-      endDate: Date,
+    fullName: {
+      type: String,
+      required: [true, 'Full name is required'],
+      trim: true,
+      minlength: [2, 'Full name must be at least 2 characters'],
     },
-    enrolledCourses: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
-    progress: [
-      {
-        courseId: { type: Schema.Types.ObjectId, ref: 'Course' },
-        completedLessons: { type: Number, default: 0 },
-        totalLessons: { type: Number, required: true },
-        lastAccessedAt: { type: Date, default: Date.now },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
+    },
+    password: {
+      type: String,
+      required: [true, 'Password is required'],
+      minlength: [8, 'Password must be at least 8 characters'],
+    },
+    role: {
+      type: String,
+      enum: ['student', 'instructor', 'admin'],
+      default: 'student',
+    },
+    subscription: {
+      tier: {
+        type: String,
+        enum: ['basics', 'intermediate', 'advanced'],
+        default: 'basics',
       },
-    ],
-    onboardingCompleted: { type: Boolean, default: false },
+      status: {
+        type: String,
+        enum: ['active', 'expired', 'cancelled'],
+        default: 'active',
+      },
+      startDate: {
+        type: Date,
+        default: Date.now,
+      },
+      endDate: {
+        type: Date,
+      },
+    },
+    onboardingCompleted: {
+      type: Boolean,
+      default: false,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-// Keep only non-email indexes
-UserSchema.index({ 'subscription.tier': 1, 'subscription.status': 1 });
+// Create index for email
+UserSchema.index({ email: 1 });
 
-export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+// Prevent model recompilation in development
+const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+
+export default User;

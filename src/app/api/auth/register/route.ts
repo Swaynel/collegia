@@ -13,8 +13,15 @@ export async function POST(req: NextRequest) {
     console.log('[Register] Starting registration process');
     
     const body = await req.json();
+    console.log('[Register] Request body:', { 
+      email: body.email, 
+      fullName: body.fullName,
+      hasPassword: !!body.password 
+    });
+
     const { fullName, email, password } = registerSchema.parse(body);
 
+    console.log('[Register] Validation passed');
     console.log('[Register] Connecting to database');
     await connectDB();
 
@@ -28,20 +35,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Hash password
+    console.log('[Register] Hashing password');
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
+    console.log('[Register] Creating new user');
+    // ✅ CRITICAL FIX: subscription must be an object, not a string
     const user = await User.create({
       fullName,
       email,
       password: hashedPassword,
-      role: 'student', // default role
-      subscription: 'free', // default subscription
+      role: 'student',
+      subscription: {
+        tier: 'basics',
+        status: 'active',
+        startDate: new Date(),
+      },
       onboardingCompleted: false,
     });
 
-    console.log('[Register] User created:', email);
+    console.log('[Register] User created successfully:', user._id);
 
     // Generate tokens
     const tokenPayload = {
@@ -54,7 +66,7 @@ export async function POST(req: NextRequest) {
     const accessToken = generateAccessToken(tokenPayload);
     const refreshToken = generateRefreshToken(user._id.toString());
 
-    console.log('[Register] Tokens generated for:', email);
+    console.log('[Register] Tokens generated');
 
     const response = NextResponse.json({
       success: true,
@@ -86,11 +98,40 @@ export async function POST(req: NextRequest) {
       maxAge: 7 * 24 * 60 * 60, // 7 days
     });
 
-    console.log('[Register] Registration successful');
+    console.log('[Register] Registration successful, cookies set');
     return response;
   } catch (error: unknown) {
     console.error('[Register] Error:', error);
-    const message = error instanceof Error ? error.message : 'Registration failed';
-    return NextResponse.json({ error: message }, { status: 400 });
+    
+    if (error instanceof Error) {
+      console.error('[Register] Error name:', error.name);
+      console.error('[Register] Error message:', error.message);
+      
+      // Handle Zod validation errors
+      if (error.name === 'ZodError') {
+        return NextResponse.json(
+          { error: 'Validation failed: ' + error.message },
+          { status: 400 }
+        );
+      }
+      
+      // Handle Mongoose validation errors
+      if (error.name === 'ValidationError') {
+        return NextResponse.json(
+          { error: 'Database validation failed: ' + error.message },
+          { status: 400 }
+        );
+      }
+      
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
+    
+    return NextResponse.json(
+      { error: 'Registration failed' },
+      { status: 500 }
+    );
   }
 }
