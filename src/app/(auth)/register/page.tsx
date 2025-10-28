@@ -33,30 +33,42 @@ export default function RegisterPage() {
       return;
     }
 
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters long');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://collegia-ebon.vercel.app'}/api/auth/register`,
-  {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      fullName: formData.fullName,
-      email: formData.email,
-      password: formData.password,
-    }),
-  }
-);
-
-
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
       const data = await response.json();
 
-      if (response.ok) {
-        router.push('/dashboard');
+      if (response.ok && data.success) {
+        // Verify session is set
+        const check = await fetch('/api/auth/me', { 
+          credentials: 'include' 
+        });
+        
+        if (check.ok) {
+          router.push('/dashboard');
+        } else {
+          setError('Session setup failed. Please try logging in.');
+          setTimeout(() => router.push('/login'), 2000);
+        }
       } else {
         setError(data.error || 'Registration failed');
       }
     } catch (err) {
-      console.error(err);
+      console.error('Registration error:', err);
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -117,7 +129,7 @@ export default function RegisterPage() {
               id="password"
               name="password"
               type="password"
-              placeholder="Create a password"
+              placeholder="Create a password (min 8 characters)"
               value={formData.password}
               onChange={handleChange}
               required
