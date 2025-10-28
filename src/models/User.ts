@@ -1,8 +1,7 @@
 // models/User.ts
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IUser extends Document {
-  _id: mongoose.Types.ObjectId;
   fullName: string;
   email: string;
   password: string;
@@ -20,63 +19,29 @@ export interface IUser extends Document {
 
 const UserSchema = new Schema<IUser>(
   {
-    fullName: {
-      type: String,
-      required: [true, 'Full name is required'],
-      trim: true,
-      minlength: [2, 'Full name must be at least 2 characters'],
-    },
+    fullName: { type: String, required: true, trim: true, minlength: 2 },
     email: {
       type: String,
-      required: [true, 'Email is required'],
+      required: true,
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
+      match: [/^\S+@\S+\.\S+$/, 'Invalid email address'],
     },
-    password: {
-      type: String,
-      required: [true, 'Password is required'],
-      minlength: [8, 'Password must be at least 8 characters'],
-    },
-    role: {
-      type: String,
-      enum: ['student', 'instructor', 'admin'],
-      default: 'student',
-    },
+    password: { type: String, required: true, minlength: 8 },
+    role: { type: String, enum: ['student', 'instructor', 'admin'], default: 'student' },
     subscription: {
-      tier: {
-        type: String,
-        enum: ['basics', 'intermediate', 'advanced'],
-        default: 'basics',
-      },
-      status: {
-        type: String,
-        enum: ['active', 'expired', 'cancelled'],
-        default: 'active',
-      },
-      startDate: {
-        type: Date,
-        default: Date.now,
-      },
-      endDate: {
-        type: Date,
-      },
+      tier: { type: String, enum: ['basics', 'intermediate', 'advanced'], default: 'basics' },
+      status: { type: String, enum: ['active', 'expired', 'cancelled'], default: 'active' },
+      startDate: { type: Date, default: Date.now },
+      endDate: { type: Date },
     },
-    onboardingCompleted: {
-      type: Boolean,
-      default: false,
-    },
+    onboardingCompleted: { type: Boolean, default: false },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-// Create index for email
+// Index for fast email lookup
 UserSchema.index({ email: 1 });
 
-// Prevent model recompilation in development
-const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
-
-export default User;
+export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
