@@ -7,7 +7,7 @@ export const getCookieOptions = () => {
     secure: isProduction,
     sameSite: 'lax' as const,
     path: '/',
-    // Don't set domain - let browser handle it
+    //the browser handles it
   };
 };
 

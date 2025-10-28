@@ -8,32 +8,28 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const protectedPaths = ['/dashboard', '/admin', '/chat'];
-  const isProtected = protectedPaths.some(path => pathname.startsWith(path));
-  const isAuthPage = ['/login', '/register'].some(path => pathname.startsWith(path));
+  const isProtected = protectedPaths.some((path) => pathname.startsWith(path));
+  const isAuthPage = ['/login', '/register'].some((path) => pathname.startsWith(path));
+
+  // Try to decode token once
+  const decoded = accessToken ? verifyAccessToken(accessToken) : null;
 
   // If user is authenticated and visits login/register, redirect to dashboard
-  if (accessToken && isAuthPage) {
-    const decoded = verifyAccessToken(accessToken);
-    if (decoded) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
+  if (decoded && isAuthPage) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  // If accessing protected route without access token, redirect to login
-  if (isProtected && !accessToken) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  // If accessing protected route without a valid token, redirect to login
+  if (isProtected && !decoded) {
+    const response = NextResponse.redirect(new URL('/login', request.url));
+    // Clear potentially invalid tokens
+    response.cookies.delete('access_token');
+    response.cookies.delete('refresh_token');
+    return response;
   }
 
-  // If access token exists but is invalid, clear it
-  if (accessToken) {
-    const decoded = verifyAccessToken(accessToken);
-    if (!decoded) {
-      const response = NextResponse.next();
-      response.cookies.delete('access_token');
-      return response;
-    }
-
-    // Optional: pass user context to API routes
+  // If access token exists and is valid, attach user info to headers
+  if (decoded) {
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-user-id', decoded.userId);
     requestHeaders.set('x-user-role', decoded.role);
