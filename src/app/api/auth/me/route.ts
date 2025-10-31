@@ -8,6 +8,14 @@ import User from '@/models/User';
 
 export async function GET(req: NextRequest) {
   try {
+    // Log incoming Cookie header to help debug missing cookies
+    try {
+      const rawCookies = req.headers.get('cookie');
+      console.log('[Auth Me] Incoming Cookie header:', rawCookies);
+    } catch (e) {
+      console.log('[Auth Me] Failed to read Cookie header:', e);
+    }
+
     // Check if token exists
     const token = req.cookies.get('access_token')?.value;
     

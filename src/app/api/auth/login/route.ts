@@ -11,8 +11,27 @@ import { loginSchema } from '@/utils/validators';
 export async function POST(req: NextRequest) {
   try {
     console.log('[Login] Starting login process');
-    
-    const body = await req.json();
+
+    // Log incoming Cookie header to verify client sent cookies (for debugging)
+    try {
+      const rawCookies = req.headers.get('cookie');
+      console.log('[Login] Incoming Cookie header:', rawCookies);
+    } catch (e) {
+      console.log('[Login] Failed to read Cookie header:', e);
+    }
+
+    // Parse JSON body safely and log non-sensitive fields for debugging
+    let body: any;
+    try {
+      body = await req.json();
+    } catch (parseError) {
+      console.error('[Login] Failed to parse JSON body:', parseError);
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    }
+
+    console.log('[Login] Request body (safe):', { email: body?.email });
+
+    // Validate input
     const { email, password } = loginSchema.parse(body);
 
     console.log('[Login] Connecting to database');
@@ -42,7 +61,9 @@ export async function POST(req: NextRequest) {
 
     console.log('[Login] Tokens generated for:', email);
 
-    const response = NextResponse.json({
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    const responseBody: any = {
       success: true,
       user: {
         id: user._id,
@@ -51,10 +72,20 @@ export async function POST(req: NextRequest) {
         role: user.role,
         subscription: user.subscription,
       },
-    });
+    };
+
+    // For local debugging only: include tokens in the response body so the client
+    // can verify tokens were generated and returned. This is skipped in production.
+    if (!isProduction) {
+      responseBody.debugTokens = {
+        accessToken,
+        refreshToken,
+      };
+    }
+
+    const response = NextResponse.json(responseBody);
 
     // Cookie options for Vercel
-    const isProduction = process.env.NODE_ENV === 'production';
     const cookieOptions = {
       httpOnly: true,
       secure: isProduction,
@@ -79,7 +110,17 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (error: unknown) {
     console.error('[Login] Error:', error);
-    const message = error instanceof Error ? error.message : 'Login failed';
-    return NextResponse.json({ error: message }, { status: 400 });
+
+    if (error instanceof Error) {
+      // Zod validation errors are surfaced with name === 'ZodError'
+      if ((error as any).name === 'ZodError') {
+        return NextResponse.json({ error: 'Validation failed: ' + error.message }, { status: 400 });
+      }
+
+      // Invalid credentials already return 401 above; treat other errors as server errors
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ error: 'Login failed' }, { status: 500 });
   }
 }

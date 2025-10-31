@@ -9,7 +9,15 @@ import { verifyRefreshToken, generateAccessToken } from '@/lib/jwt';
 export async function POST(req: NextRequest) {
   try {
     console.log('[Refresh] Starting token refresh');
-    
+
+    // Log incoming Cookie header to help debug missing cookies
+    try {
+      const rawCookies = req.headers.get('cookie');
+      console.log('[Refresh] Incoming Cookie header:', rawCookies);
+    } catch (e) {
+      console.log('[Refresh] Failed to read Cookie header:', e);
+    }
+
     const refreshToken = req.cookies.get('refresh_token')?.value;
     
     if (!refreshToken) {
@@ -51,9 +59,14 @@ export async function POST(req: NextRequest) {
     const newAccessToken = generateAccessToken(tokenPayload);
     console.log('[Refresh] New access token generated');
 
-    const response = NextResponse.json({ success: true });
-    
     const isProduction = process.env.NODE_ENV === 'production';
+
+    const responseBody: any = { success: true };
+    if (!isProduction) {
+      responseBody.debugTokens = { accessToken: newAccessToken };
+    }
+
+  const response = NextResponse.json(responseBody);
     response.cookies.set('access_token', newAccessToken, {
       httpOnly: true,
       secure: isProduction,
